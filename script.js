@@ -9,18 +9,19 @@ const GAME_SPEED = 1000 / 10; // 10 frames per second
 
 //Initial snake position and segments
 let snake = {
+    //x and y for position, dx and dy for movement direction
     x: Math.floor(canvas.width/2/GRID_SIZE) * GRID_SIZE,
     y: Math.floor(canvas.height/2/GRID_SIZE) * GRID_SIZE,
     dx: GRID_SIZE, // movement in x direction
     dy: 0,         // movement in y direction 
-    cells: [],     // array to store snake segments
-    maxCells: 4    // initial length
+    cells: [],     // array to store body snake segments
+    maxCells: 4    // initial length of snake
 }
 
 snake.cells.push({x: snake.x, y: snake.y});
 
 function moveSnake(){
-    //Update snake's position
+    //Update snake's position by adding direction values
     snake.x += snake.dx;
     snake.y += snake.dy;
 
@@ -41,7 +42,7 @@ function moveSnake(){
     //Add new head position to beginning of cells array
     snake.cells.unshift({ x: snake.x, y: snake.y });
 
-    //Remove tail if snake length exceeds maxCells
+    //Remove tail if snake length exceeds maxCells (snake is too long)
     if (snake.cells.length > snake.maxCells){
         snake.cells.pop();
     }
@@ -52,19 +53,25 @@ function gameLoop(currentTime){
         lastTime = currentTime;
     }
 
+    //Controls game speed using time difference
     if(currentTime - lastTime >= GAME_SPEED){
+        //Clear previous frame
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        //Move snake
         moveSnake();
 
-        // Draw snake segments
-        ctx.fillStyle = 'green';
+        // Draw snake segments as black square
+        ctx.fillStyle = 'gray';
         snake.cells.forEach(cell => {
             ctx.fillRect(cell.x, cell.y, GRID_SIZE-1, GRID_SIZE-1);
         })
 
+        //Update last frame time
         lastTime = currentTime;
     }
 
+    //Request next frame
     requestAnimationFrame(gameLoop);
 }
 
